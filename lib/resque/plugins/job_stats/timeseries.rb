@@ -1,4 +1,5 @@
 require 'time'
+require 'resque/plugins/job_stats/common'
 
 module Resque
   module Plugins
@@ -9,6 +10,8 @@ module Resque
       module Timeseries
 
         module Common
+          include Resque::Plugins::JobStats::Common
+
           # A timestamp rounded to the lowest minute
           def timestamp
             time = Time.now.utc
@@ -37,7 +40,7 @@ module Resque
           end
 
           def prefix # :nodoc:
-            "stats:jobs:#{self.name}:timeseries"
+            "#{key_prefix}:timeseries"
           end
 
           def incr_timeseries(type) # :nodoc:

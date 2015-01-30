@@ -1,3 +1,5 @@
+require 'resque/plugins/job_stats/common'
+
 module Resque
   module Plugins
     module JobStats
@@ -5,6 +7,7 @@ module Resque
       # Extend your job with this module to track how many
       # jobs are performed successfully
       module Performed
+        include Resque::Plugins::JobStats::Common
 
         # Sets the number of jobs performed
         def jobs_performed=(int)
@@ -18,7 +21,7 @@ module Resque
 
         # Returns the key used for tracking jobs performed
         def jobs_performed_key
-          "stats:jobs:#{self.name}:performed"
+          "#{key_prefix}:performed"
         end
 
         # Increments the performed count when job is complete

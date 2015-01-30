@@ -1,7 +1,10 @@
+require 'resque/plugins/job_stats/common'
+
 module Resque
   module Plugins
     module JobStats
       module Duration
+        include Resque::Plugins::JobStats::Common
 
         # Resets all job durations
         def reset_job_durations
@@ -15,7 +18,7 @@ module Resque
 
         # Returns the key used for tracking job durations
         def jobs_duration_key
-          "stats:jobs:#{self.name}:duration"
+          "#{key_prefix}:duration"
         end
 
         # Increments the failed count when job is complete

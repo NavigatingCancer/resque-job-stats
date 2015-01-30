@@ -1,3 +1,5 @@
+require 'resque/plugins/job_stats/common'
+
 module Resque
   module Plugins
     module JobStats
@@ -5,6 +7,7 @@ module Resque
       # Extend your job with this module to track how many
       # jobs are queued successfully
       module Enqueued
+        include Resque::Plugins::JobStats::Common
 
         # Sets the number of jobs queued
         def jobs_enqueued=(int)
@@ -18,7 +21,7 @@ module Resque
 
         # Returns the key used for tracking jobs enqueued
         def jobs_enqueued_key
-          "stats:jobs:#{self.name}:enqueued"
+          "#{key_prefix}:enqueued"
         end
 
         # Increments the enqueued count when job is queued

@@ -1,3 +1,5 @@
+require 'resque/plugins/job_stats/common'
+
 module Resque
   module Plugins
     module JobStats
@@ -5,6 +7,7 @@ module Resque
       # Extend your job with this module to track how many
       # jobs fail
       module Failed
+        include Resque::Plugins::JobStats::Common
 
         # Sets the number of jobs failed
         def jobs_failed=(int)
@@ -20,7 +23,7 @@ module Resque
 
         # Returns the key used for tracking jobs failed
         def jobs_failed_key
-          "stats:jobs:#{self.name}:failed"
+          "#{key_prefix}:failed"
         end
 
         # Increments the failed count when job is complete

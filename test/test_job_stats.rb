@@ -10,12 +10,16 @@ end
 
 class SimpleJob < BaseJob
   extend Resque::Plugins::JobStats
-  @queue = :test
+  def self.queue
+    :test
+  end
 end
 
 class FailJob < BaseJob
   extend Resque::Plugins::JobStats::Failed
-  @queue = :test
+  def self.queue
+    :test
+  end
 
   def self.perform(*args)
     raise 'fail'
@@ -24,7 +28,9 @@ end
 
 class CustomDurJob < BaseJob
   extend Resque::Plugins::JobStats::Duration
-  @queue = :test
+  def self.queue
+    :test
+  end
   @durations_recorded = 5
 end
 
@@ -44,7 +50,7 @@ class TestResqueJobStats < MiniTest::Unit::TestCase
   end
 
   def test_jobs_performed
-    assert_equal 'stats:jobs:SimpleJob:performed', SimpleJob.jobs_performed_key
+    assert_equal 'stats:test:SimpleJob:performed', SimpleJob.jobs_performed_key
     SimpleJob.jobs_performed = 0
     3.times do
       Resque.enqueue(SimpleJob)
@@ -54,7 +60,7 @@ class TestResqueJobStats < MiniTest::Unit::TestCase
   end
 
   def test_jobs_enqueued
-    assert_equal 'stats:jobs:SimpleJob:enqueued', SimpleJob.jobs_enqueued_key
+    assert_equal 'stats:test:SimpleJob:enqueued', SimpleJob.jobs_enqueued_key
     SimpleJob.jobs_enqueued = 0
     3.times do
       Resque.enqueue(SimpleJob)
@@ -64,7 +70,7 @@ class TestResqueJobStats < MiniTest::Unit::TestCase
   end
 
   def test_jobs_failed
-    assert_equal 'stats:jobs:FailJob:failed', FailJob.jobs_failed_key
+    assert_equal 'stats:test:FailJob:failed', FailJob.jobs_failed_key
     FailJob.jobs_failed = 0
     3.times do
       Resque.enqueue(FailJob)
@@ -74,7 +80,7 @@ class TestResqueJobStats < MiniTest::Unit::TestCase
   end
 
   def test_duration
-    assert_equal 'stats:jobs:SimpleJob:duration', SimpleJob.jobs_duration_key
+    assert_equal 'stats:test:SimpleJob:duration', SimpleJob.jobs_duration_key
     SimpleJob.reset_job_durations
     assert_equal 0.0, SimpleJob.job_rolling_avg
     assert_equal 0.0, SimpleJob.longest_job
